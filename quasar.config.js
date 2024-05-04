@@ -225,7 +225,7 @@ module.exports = configure(function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
         appId: 'ServerStarter2',
-        artifactName: 'ServerStarter-v${version}.${ext}',
+        artifactName: 'ServerStarter2.${ext}',
         asarUnpack: [
           'node_modules/sharp/**',
           'node_modules/@ngrok/**/*.node',
