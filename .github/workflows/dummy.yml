@@ -206,7 +206,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: true.${{ matrix.ext }}
-          path: true.${{ matrix.ext }}
+          path: ./
 
       # リリースにビルドデータをアップロード
       - name: Upload a Release Asset
@@ -225,7 +225,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: false.${{ matrix.ext }}
-          path: false.${{ matrix.ext }}
+          path: ./
 
       # リリースにビルドデータをアップロード(現行バージョン)
       - name: Upload a Release Asset
