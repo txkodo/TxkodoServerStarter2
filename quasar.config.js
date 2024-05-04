@@ -225,7 +225,7 @@ module.exports = configure(function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
         appId: 'ServerStarter2',
-        artifactName:"ServerStarter-v${version}.${ext}",
+        artifactName: 'ServerStarter-v${version}.${ext}',
         asarUnpack: [
           'node_modules/sharp/**',
           'node_modules/@ngrok/**/*.node',
@@ -234,7 +234,6 @@ module.exports = configure(function (/* ctx */) {
         beforePack,
         win: {
           target: 'msi',
-          
         },
         mac: {
           target: 'pkg',
