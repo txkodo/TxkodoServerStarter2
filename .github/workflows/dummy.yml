@@ -133,7 +133,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: msi
-          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter-v${{ needs.create-commit.outputs.next-version }}.msi"
+          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter2.msi"
           retention-days: 1
 
       # MacのビルドデータをArtifactとして一時保存
@@ -142,7 +142,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: pkg
-          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter-v${{ needs.create-commit.outputs.next-version }}.pkg"
+          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter2.pkg"
           retention-days: 1
 
       # Debianのビルドデータを指定のパスに移動
@@ -151,7 +151,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: dmg
-          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter-v${{ needs.create-commit.outputs.next-version }}.dmg"
+          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter2.dmg"
           retention-days: 1
 
       # Redhatのビルドデータを指定のパスに移動
@@ -160,7 +160,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: rpm
-          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter-v${{ needs.create-commit.outputs.next-version }}.rpm"
+          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter2.rpm"
           retention-days: 1
 
   # リリースを作成
