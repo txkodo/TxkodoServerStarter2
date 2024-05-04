@@ -132,8 +132,8 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v3
         with:
-          name: msi
-          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter2.msi"
+          name: ${{new-ver}}.msi
+          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter2.${{new-ver}}.msi"
           retention-days: 1
 
       # MacのビルドデータをArtifactとして一時保存
@@ -141,7 +141,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         uses: actions/upload-artifact@v3
         with:
-          name: pkg
+          name: ${{new-ver}}.pkg
           path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter2.pkg"
           retention-days: 1
 
@@ -150,8 +150,8 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v3
         with:
-          name: dmg
-          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter2.dmg"
+          name: ${{new-ver}}.deb
+          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter2.deb"
           retention-days: 1
 
       # Redhatのビルドデータを指定のパスに移動
@@ -159,7 +159,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v3
         with:
-          name: rpm
+          name: ${{new-ver}}.rpm
           path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter2.rpm"
           retention-days: 1
 
@@ -205,8 +205,8 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v3
         with:
-          name: ${{ matrix.ext }}
-          path: ${{ matrix.ext }}
+          name: true.${{ matrix.ext }}
+          path: true.${{ matrix.ext }}
 
       # リリースにビルドデータをアップロード
       - name: Upload a Release Asset
@@ -216,8 +216,27 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ${{ matrix.ext }}
+          asset_path: true.${{ matrix.ext }}
           asset_name: ServerStarter-v${{ needs.create-commit.outputs.next-version }}.${{ matrix.ext }}
+          asset_content_type: appliction/${{ matrix.ext }}
+
+      # 一時保存したアーティファクトをダウンロード(現行バージョン)
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: false.${{ matrix.ext }}
+          path: false.${{ matrix.ext }}
+
+      # リリースにビルドデータをアップロード(現行バージョン)
+      - name: Upload a Release Asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: false.${{ matrix.ext }}
+          asset_name: ServerStarter-v${{ needs.create-commit.outputs.current-version }}.${{ matrix.ext }}
           asset_content_type: appliction/${{ matrix.ext }}
 
   # Discordに通知
