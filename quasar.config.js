@@ -234,6 +234,7 @@ module.exports = configure(function (/* ctx */) {
         beforePack,
         win: {
           target: 'msi',
+          
         },
         mac: {
           target: 'pkg',
