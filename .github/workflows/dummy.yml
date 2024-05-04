@@ -133,7 +133,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.new-ver}}.msi
-          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter2.${{matrix.new-ver}}.msi"
+          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter2.msi"
           retention-days: 1
 
       # MacのビルドデータをArtifactとして一時保存
@@ -210,7 +210,7 @@ jobs:
 
       # リリースにビルドデータをアップロード
       - name: Upload a Release Asset
-        id: upload_release_asset
+        id: upload_release_asset_next
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -229,7 +229,7 @@ jobs:
 
       # リリースにビルドデータをアップロード(現行バージョン)
       - name: Upload a Release Asset
-        id: upload_release_asset
+        id: upload_release_asset_current
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
