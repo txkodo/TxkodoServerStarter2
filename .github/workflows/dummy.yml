@@ -120,6 +120,8 @@ jobs:
 
       # create-commitで行った更新をpullし、ビルドを実行
       - name: Pull and Build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git pull
           yarn install
