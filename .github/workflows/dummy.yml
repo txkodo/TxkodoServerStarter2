@@ -49,8 +49,20 @@ jobs:
           git add .
           git commit -m "🔖 Release ${{ steps.get_version.outputs.next-version }}"
 
-      # mainに対してpullRequestを作成
+      # リリースブランチの存在確認
+      # https://dev.classmethod.jp/articles/github-actions-check-if-specific-branch-is-existing/
+      - name: check release branch exists
+        run: |
+          branch_exists=$(
+            git fetch origin release/v${{ steps.get_version.outputs.next-version }} &&
+            echo true ||
+            echo false
+          )
+          echo "BRANCH_EXISTS=${branch_exists}" >> $GITHUB_ENV
+
+      # リリースブランチがない場合のみmainに対してpullRequestを作成
       - name: Create Pull Request
+        if: env.BRANCH_EXISTS == 'false'
         id: pullrequest
         uses: peter-evans/create-pull-request@v5
         with:
@@ -189,7 +201,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: true.${{ matrix.ext }}
-          path: ./
+          path: true/
 
       # リリースにビルドデータをアップロード
       - name: Upload a Release Asset
@@ -199,7 +211,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: true.${{ matrix.ext }}
+          asset_path: true/ServerStarter.build.${{ matrix.ext }}
           asset_name: ServerStarter-v${{ needs.create-commit.outputs.next-version }}.${{ matrix.ext }}
           asset_content_type: appliction/${{ matrix.ext }}
 
@@ -208,7 +220,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: false.${{ matrix.ext }}
-          path: ./
+          path: false/
 
       # リリースにビルドデータをアップロード(現行バージョン)
       - name: Upload a Release Asset
@@ -218,7 +230,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: false.${{ matrix.ext }}
+          asset_path: false/ServerStarter.build.${{ matrix.ext }}
           asset_name: ServerStarter-v${{ needs.create-commit.outputs.current-version }}.${{ matrix.ext }}
           asset_content_type: appliction/${{ matrix.ext }}
 
