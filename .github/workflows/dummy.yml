@@ -133,7 +133,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.new-ver}}.msi
-          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter2.${{matrix.new-ver}}.msi"
+          path: "${{github.workspace}}/dist/electron/Packaged/ServerStarter2.msi"
           retention-days: 1
 
       # MacのビルドデータをArtifactとして一時保存
