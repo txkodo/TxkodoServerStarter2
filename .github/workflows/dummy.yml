@@ -49,8 +49,20 @@ jobs:
           git add .
           git commit -m "🔖 Release ${{ steps.get_version.outputs.next-version }}"
 
-      # mainに対してpullRequestを作成
+      # リリースブランチの存在確認
+      # https://dev.classmethod.jp/articles/github-actions-check-if-specific-branch-is-existing/
+      - name: check release branch exists
+        run: |
+          branch_exists=$(
+            git fetch origin release/v${{ steps.get_version.outputs.next-version }} &&
+            echo true ||
+            echo false
+          )
+          echo "BRANCH_EXISTS=${branch_exists}" >> $GITHUB_ENV
+
+      # リリースブランチがない場合のみmainに対してpullRequestを作成
       - name: Create Pull Request
+        if: env.BRANCH_EXISTS == 'false'
         id: pullrequest
         uses: peter-evans/create-pull-request@v5
         with:
