@@ -215,14 +215,14 @@ jobs:
       # リリースにビルドデータをアップロード
       - name: Upload a Release Asset
         id: upload_release_asset_next
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: shogo82148/actions-upload-release-asset@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: true/ServerStarter.build.${{ matrix.ext }}
           asset_name: ServerStarter-v${{ needs.create-commit.outputs.next-version }}.${{ matrix.ext }}
           asset_content_type: appliction/${{ matrix.ext }}
+          overwrite: true
 
       # 一時保存したアーティファクトをダウンロード(現行バージョン)
       - name: Download Artifact
@@ -234,14 +234,14 @@ jobs:
       # リリースにビルドデータをアップロード(現行バージョン)
       - name: Upload a Release Asset
         id: upload_release_asset_current
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: shogo82148/actions-upload-release-asset@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: false/ServerStarter.build.${{ matrix.ext }}
           asset_name: ServerStarter-v${{ needs.create-commit.outputs.current-version }}.${{ matrix.ext }}
           asset_content_type: appliction/${{ matrix.ext }}
+          overwrite: true
 
   # Discordに通知
   notify:
