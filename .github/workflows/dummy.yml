@@ -34,12 +34,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # package.jsonのversionを次のバージョンに更新 [リリースブランチがない場合]
       - uses: Server-Starter-for-Minecraft/VersionUpdater@v1
         id: get_version
         with:
           update-type: ${{inputs.type}}
+
+      # git config
+      - name: git config
+        run: |
+          git config --local user.name github-actions[bot]
+          git config --local user.email 41898282+github-actions[bot]@users.noreply.github.com
 
       # リリースブランチの存在確認
       # https://dev.classmethod.jp/articles/github-actions-check-if-specific-branch-is-existing/
@@ -56,8 +64,6 @@ jobs:
       - name: git add & git commit
         if: env.BRANCH_EXISTS == 'false'
         run: |
-          git config --local user.name github-actions[bot]
-          git config --local user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add .
           git commit -m "🔖 Release ${{ steps.get_version.outputs.next-version }}"
 
@@ -85,6 +91,7 @@ jobs:
           git clean -f
           git checkout release/v${{ steps.get_version.outputs.next-version }}
           git merge origin/main
+          git push
 
     outputs:
       current-version: ${{steps.get_version.outputs.current-version }}
