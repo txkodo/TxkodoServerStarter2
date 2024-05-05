@@ -34,6 +34,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # package.jsonのversionを次のバージョンに更新 [リリースブランチがない場合]
       - uses: Server-Starter-for-Minecraft/VersionUpdater@v1
