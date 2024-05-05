@@ -35,23 +35,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # リリースブランチの存在確認
-      # https://dev.classmethod.jp/articles/github-actions-check-if-specific-branch-is-existing/
-      - name: check release branch exists
-        run: |
-          branch_exists=$(
-            git fetch origin release/v${{ steps.get_version.outputs.next-version }} &&
-            echo true ||
-            echo false
-          )
-          echo "BRANCH_EXISTS=${branch_exists}" >> $GITHUB_ENV
-
       # package.jsonのversionを次のバージョンに更新 [リリースブランチがない場合]
       - uses: Server-Starter-for-Minecraft/VersionUpdater@v1
         if: env.BRANCH_EXISTS == 'false'
         id: get_version
         with:
           update-type: ${{inputs.type}}
+
+      # リリースブランチの存在確認
+      # https://dev.classmethod.jp/articles/github-actions-check-if-specific-branch-is-existing/
+      - name: check release branch exists
+        run: |
+          branch_exists=$(
+            git fetch origin release/v${{steps.get_version.outputs.next-version}} &&
+            echo true ||
+            echo false
+          )
+          echo "BRANCH_EXISTS=${branch_exists}" >> $GITHUB_ENV
 
       # git commit [リリースブランチがない場合]
       - name: git add & git commit
@@ -80,7 +80,10 @@ jobs:
       # リリースブランチにmainをマージ [リリースブランチがある場合]
       - name: Merge Main to Release Branch
         if: env.BRANCH_EXISTS == 'true'
+        # 先にget_versionの変更を取り消す
         run: |
+          git checkout -- .
+          git clean -f
           git checkout release/v${{ steps.get_version.outputs.next-version }}
           git merge main
 
