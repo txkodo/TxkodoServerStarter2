@@ -91,6 +91,7 @@ jobs:
           git clean -f
           git checkout release/v${{ steps.get_version.outputs.next-version }}
           git merge origin/main
+          git push
 
     outputs:
       current-version: ${{steps.get_version.outputs.current-version }}
