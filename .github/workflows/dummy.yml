@@ -35,20 +35,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # package.jsonのversionを次のバージョンに更新
-      - uses: Server-Starter-for-Minecraft/VersionUpdater@v1
-        id: get_version
-        with:
-          update-type: ${{inputs.type}}
-
-      # git commit
-      - name: git add & git commit
-        run: |
-          git config --local user.name github-actions[bot]
-          git config --local user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add .
-          git commit -m "🔖 Release ${{ steps.get_version.outputs.next-version }}"
-
       # リリースブランチの存在確認
       # https://dev.classmethod.jp/articles/github-actions-check-if-specific-branch-is-existing/
       - name: check release branch exists
@@ -60,7 +46,23 @@ jobs:
           )
           echo "BRANCH_EXISTS=${branch_exists}" >> $GITHUB_ENV
 
-      # リリースブランチがない場合のみmainに対してpullRequestを作成
+      # package.jsonのversionを次のバージョンに更新 [リリースブランチがない場合]
+      - uses: Server-Starter-for-Minecraft/VersionUpdater@v1
+        if: env.BRANCH_EXISTS == 'false'
+        id: get_version
+        with:
+          update-type: ${{inputs.type}}
+
+      # git commit [リリースブランチがない場合]
+      - name: git add & git commit
+        if: env.BRANCH_EXISTS == 'false'
+        run: |
+          git config --local user.name github-actions[bot]
+          git config --local user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .
+          git commit -m "🔖 Release ${{ steps.get_version.outputs.next-version }}"
+
+      # mainに対してpullRequestを作成 [リリースブランチがない場合]
       - name: Create Pull Request
         if: env.BRANCH_EXISTS == 'false'
         id: pullrequest
@@ -74,6 +76,13 @@ jobs:
           base: main
           labels: release
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+      # リリースブランチにmainをマージ [リリースブランチがある場合]
+      - name: Merge Main to Release Branch
+        if: env.BRANCH_EXISTS == 'true'
+        run: |
+          git checkout release/v${{ steps.get_version.outputs.next-version }}
+          git merge main
 
     outputs:
       current-version: ${{steps.get_version.outputs.current-version }}
@@ -206,14 +215,14 @@ jobs:
       # リリースにビルドデータをアップロード
       - name: Upload a Release Asset
         id: upload_release_asset_next
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: shogo82148/actions-upload-release-asset@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: true/ServerStarter.build.${{ matrix.ext }}
           asset_name: ServerStarter-v${{ needs.create-commit.outputs.next-version }}.${{ matrix.ext }}
           asset_content_type: appliction/${{ matrix.ext }}
+          overwrite: true
 
       # 一時保存したアーティファクトをダウンロード(現行バージョン)
       - name: Download Artifact
@@ -225,14 +234,14 @@ jobs:
       # リリースにビルドデータをアップロード(現行バージョン)
       - name: Upload a Release Asset
         id: upload_release_asset_current
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: shogo82148/actions-upload-release-asset@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: false/ServerStarter.build.${{ matrix.ext }}
           asset_name: ServerStarter-v${{ needs.create-commit.outputs.current-version }}.${{ matrix.ext }}
           asset_content_type: appliction/${{ matrix.ext }}
+          overwrite: true
 
   # Discordに通知
   notify:
