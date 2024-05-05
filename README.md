@@ -5,9 +5,6 @@ Start Minecraft server only ONE click !
 Minecraft のマルチプレイサーバーを簡単に起動します！
 
 詳細は[公式HP](https://server-starter-for-minecraft.github.io)をご確認ください！
-
-COMMENT
-
 <br>
 <br>
 
