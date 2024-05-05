@@ -43,6 +43,12 @@ jobs:
         with:
           update-type: ${{inputs.type}}
 
+      # git config
+      - name: git config
+        run: |
+          git config --local user.name github-actions[bot]
+          git config --local user.email 41898282+github-actions[bot]@users.noreply.github.com
+
       # リリースブランチの存在確認
       # https://dev.classmethod.jp/articles/github-actions-check-if-specific-branch-is-existing/
       - name: check release branch exists
@@ -58,8 +64,6 @@ jobs:
       - name: git add & git commit
         if: env.BRANCH_EXISTS == 'false'
         run: |
-          git config --local user.name github-actions[bot]
-          git config --local user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add .
           git commit -m "🔖 Release ${{ steps.get_version.outputs.next-version }}"
 
