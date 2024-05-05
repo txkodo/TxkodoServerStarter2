@@ -37,7 +37,6 @@ jobs:
 
       # package.jsonのversionを次のバージョンに更新 [リリースブランチがない場合]
       - uses: Server-Starter-for-Minecraft/VersionUpdater@v1
-        if: env.BRANCH_EXISTS == 'false'
         id: get_version
         with:
           update-type: ${{inputs.type}}
