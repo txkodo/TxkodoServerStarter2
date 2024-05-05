@@ -8,7 +8,7 @@ Minecraft のマルチプレイサーバーを簡単に起動します！
 <br>
 <br>
 
-<details>
+<details>1111
   <summary>
     ServerStarter(以前のバージョン)から移行してきた方
   </summary>
